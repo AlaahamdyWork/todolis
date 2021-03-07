@@ -11,7 +11,8 @@ It's the first time to work with drupal so it was challenge for me to do this ta
     so I took a decision to display the first 5 tasks of all users due date is today.
     
   2- I put todolist block in content region in drupal 7 but for drupal 8 i tried to use hock_preprocess
-     to set region but I couldn't .
+     to set region code deidn't work , you can set the region from the administration 
+     admin/structure/block .
   
  ## Notes   
    - in export and import excel 
