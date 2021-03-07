@@ -1,6 +1,6 @@
 ## Task challenges:
 It's the first time to work with drupal so it was challenge for me to do this task
- with two different versions of drupal (7 & 8) and know the differences between them in less than three days 
+ with two different versions of drupal (7 & 8) and know the differences between them in short time 
  
 
  
@@ -15,8 +15,15 @@ It's the first time to work with drupal so it was challenge for me to do this ta
      admin/structure/block .
   
  ## Notes   
+   - todolist drupal version 7 on branch drupal7
+   
+   - todolist drupal version 8 on branch drupal8
+   
    - in export and import excel 
    
     impoert excel-> user can see only his imported tasks but if the user is manager can see all tasts
     
     export excel -> user export only his tasks but if the user is manager export all tasks
+    
+ ## Task Rate
+ taske rate is 4   
