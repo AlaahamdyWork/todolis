@@ -1,0 +1,77 @@
+# This file brings everything together. Very nifty!
+
+# Route name can be used in sevaral place (links, redirects, local actions etc.)
+entity.todolist_Task.canonical:
+  path: '/todolist_Task/{todolist_Task}'
+  defaults:
+  # Calls the view controller, defined in the annotation of the todolist_Task entity
+    _entity_view: 'todolist_Task'
+    _title: 'todolist_Task Content'
+  requirements:
+  # Calls the access controller of the entity, $operation 'view'
+    _entity_access: 'todolist_Task.view'
+
+entity.todolist_Task.collection:
+  path: '/todolist_Task/list'
+  defaults:
+  # Calls the list controller, defined in the annotation of the todolist_Task entity.
+    _entity_list: 'todolist_Task'
+    _title: 'todolist_Task List'
+  requirements:
+  # Checks for permission directly.
+    _permission: 'view todolist_Task entity'
+
+entity.dictionary.term_add:
+  path: '/todolist_Task/add'
+  defaults:
+  # Calls the form.add controller, defined in the todolist_Task entity.
+    _entity_form: todolist_Task.add
+    _title: 'Add todolist_Task'
+  requirements:
+    _entity_create_access: 'todolist_Task'
+
+entity.todolist_Task.edit_form:
+  path: '/todolist_Task/{todolist_Task}/edit'
+  defaults:
+  # Calls the form.edit controller, defined in the todolist_Task entity.
+    _entity_form: todolist_Task.edit
+    _title: 'Edit todolist_Task'
+  requirements:
+    _entity_access: 'todolist_Task.edit'
+
+entity.todolist_Task.delete_form:
+  path: '/todolist_Task/{todolist_Task}/delete'
+  defaults:
+    # Calls the form.delete controller, defined in the todolist_Task entity.
+    _entity_form: todolist_Task.delete
+    _title: 'Delete todolist_Task'
+  requirements:
+    _entity_access: 'todolist_Task.delete'
+
+todolist.uploadForm:
+  path: '/todolist/uploadTasks'
+  defaults:
+    _form: '\Drupal\todolist\Form\UploadForm'
+    _title: 'Upload Tasks'
+  requirements:
+    _permission: 'access content'
+    _entity_create_access: 'todolist_Task'
+
+todolist.exportTasksForm:
+  path: '/todolist/exportTasks'
+  defaults:
+    _form: '\Drupal\todolist\Form\ExportTasksForm'
+    _title: 'Export Tasks'
+  requirements:
+    _permission: 'access content'
+    _entity_create_access: 'todolist_Task'
+
+entity.todolist.Task_settings:
+  path: 'admin/structure/todolist_Task_settings'
+  defaults:
+    _form: '\Drupal\todolist\Form\TaskSettingsForm'
+    _title: 'todolist_Task Settings'
+  requirements:
+    _permission: 'administer todolist_Task entity'
+
+

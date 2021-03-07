@@ -1,0 +1,27 @@
+# Define the menu links for this module
+
+entity.todolist_Task.collection:
+  title: 'List All Tasks'
+  route_name: entity.todolist_Task.collection
+  description: 'List All Tasks'
+  weight: 1
+
+entity.dictionary.term_add:
+  title: 'Create Task'
+  route_name: entity.dictionary.term_add
+  description: 'Add Task'
+  weight: 2
+
+todolist.uploadForm:
+  title: 'Upload Tasks'
+  route_name: todolist.uploadForm
+  description: 'Import Tasks'
+  weight: 3
+
+todolist.exportTasksForm:
+  title: 'Export Tasks'
+  route_name: todolist.exportTasksForm
+  description: 'Export Tasks'
+  weight: 4
+
+

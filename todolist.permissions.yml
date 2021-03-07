@@ -1,0 +1,12 @@
+'delete todolist_Task entity':
+  title: Delete task entity content.
+'add todolist_Task entity':
+  title: Add task entity content
+'view todolist_Task entity':
+  title: View task entity content
+'edit todolist_Task entity':
+  title: Edit task entity content
+'administer todolist_Task entity':
+  title: Administer task  settings
+
+

@@ -1,0 +1,174 @@
+<?php
+
+/**
+ * @file
+ * Contains todolist.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\user\Entity\Role;
+use Drupal\block\Entity\Block;
+use  \Drupal\user\Entity\User;
+
+/**
+ * Implements hook_help().
+ */
+function todolist_help($route_name, RouteMatchInterface $route_match)
+{
+    switch ($route_name) {
+        // Main module help for the todolist module.
+        case 'help.page.todolist':
+            $output = '';
+            $output .= '<h3>' . t('About') . '</h3>';
+            $output .= '<p>' . t('My Awesome Module') . '</p>';
+            return $output;
+
+        default:
+    }
+}
+
+/**
+ * Implements hook_install().
+ */
+function todolist_install()
+{
+    //add task permissions to the authenticated users
+    $role_object = Role::load('authenticated');
+    $role_object->grantPermission('edit todolist_Task entity');
+    $role_object->grantPermission('view todolist_Task entity');
+    $role_object->grantPermission('add todolist_Task entity');
+    $role_object->grantPermission('delete todolist_Task entity');
+    $role_object->save();
+
+    //create manager role but first check if the role already created or not
+    $role = 'manager';
+    if (!Role::load($role)) {
+
+        $data = array('id' => 'manager', 'label' => 'Manager');
+        //creating your role
+        $role = \Drupal\user\Entity\Role::create($data);
+        //saving your role
+        $role->save();
+    }
+    /*$block = Block::load('todolist_block');
+    $block->setRegion('content');
+    $visibility = $block->getVisibility();
+    if (isset($visibility['request_path']['pages'])) {
+        $visibility['request_path']['pages'] = '<front>';
+        $block->setVisibilityConfig('request_path', $visibility['request_path']);
+    }
+    $block->save();*/
+
+}
+/**
+ * Implements hook_uninstall().
+ *
+ * 1. check if the role exist
+ * 2. if exist get all user's who has the role
+ * 3. delete the roles from users
+ * 4. delete role
+ */
+function todolist_uninstall()
+{
+    $role = 'manager';
+    $role_entity = Role::load($role);
+    if ($role_entity) {
+        $ids = \Drupal::entityQuery('user')
+            ->condition('roles', $role)
+            ->execute();
+        $users = User::loadMultiple($ids);
+        if ($users) {
+            foreach ($users as $user) {
+                $user->removeRole($role);
+            }
+        }
+        $role_entity->delete();
+    }
+}
+
+/**
+ * Implementation of hook_cron().
+ *
+ * 1. group tasks by user
+ * 2. get all tasks for each user
+ * 3. send email to each user with his tasks
+ *
+ */
+function todolist_cron()
+{
+
+    $db = \Drupal::database();
+    $usersTask =$db->select('todolist_Task', 'todo');
+    $usersTask->join('users', 'u', 'todo.user_id = u.id');
+    $users = $usersTask->fields('u', array('id', 'mail'))
+        ->condition('todo.status', array('new', 'pending'), 'IN')
+        ->groupBy('todo.user_id')
+        ->execute()
+        ->fetchAll();
+    foreach ($users as $res) {
+        $tasks = $db->select('todolist_Task', 'todo')
+            ->fields(('todo'))
+            ->condition('todo.status', array('new', 'pending'), 'IN')
+            ->condition('todo.user_id', $res->uid, '=')
+            ->execute()
+            ->fetchAll();
+        if ($tasks) {
+            $separated_tasks = implode(",", array_column($tasks, 'task_title'));
+            $message = "You have not completed these tasks {$separated_tasks} yet, kindly complete it now";
+            $params = array(
+                'body' => $message,
+                'subject' => 'ToDo Tasks',
+                'headers' => 'simple',
+            );
+            $to = $res->mail;
+
+          \Drupal::service('plugin.manager.mail')->mail('todolist', 'todolist_send_link', $to, language_default(), $params, variable_get('site_mail'), TRUE);
+        }
+    }
+}
+
+
+function todolist_preprocess(&$variables, $hook) {
+    /*$block = Block::load('todolist_block');
+    $block->setRegion('content');
+    $visibility = $block->getVisibility();
+    if (isset($visibility['request_path']['pages'])) {
+        $visibility['request_path']['pages'] = '<front>';
+        $block->setVisibilityConfig('request_path', $visibility['request_path']);
+    }
+    $block->save();*/
+
+
+}
+/**
+ * Implements hook_theme().
+ */
+function todolist_theme()
+{
+    //$block_manager = \Drupal::service('plugin.manager.block');
+// You can hard code configuration or you load from settings.
+    /*$config = ['region'=>'content'];
+    $plugin_block = $block_manager->createInstance('todolist_block', $config);
+    $plugin_block->build();
+   */
+   /*$example_block = \Drupal::entityManager()->getStorage('block')->getQuery()->execute();
+    */
+    /*
+        $block_manager = \Drupal::service('plugin.manager.block');
+        $block = Block::load('todolist_block');
+        $block->setRegion('content');
+        $visibility = $block->getVisibility();
+        if (isset($visibility['request_path']['pages'])) {
+            $visibility['request_path']['pages'] = '<front>';
+            $block->setVisibilityConfig('request_path', $visibility['request_path']);
+        }
+        $block->save()*/;
+    return [
+        'todolist' => [
+            'render element' => 'children',
+        ],
+/*        'todolist_block' => [
+        ],*/
+    ];
+}
+
