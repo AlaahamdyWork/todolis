@@ -1,0 +1,94 @@
+<?php
+/**
+ * @file
+ * todolist installation
+ */
+
+/**
+ * Implementation of hook_schema().
+ */
+function todolist_schema() {
+  $schema['todolist_task'] = array(
+    'description' => 'The base table for tasks.',
+    'fields' => array(
+      'tid' => array(
+        'description' => 'The primary identifier for a task.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        ),
+      'task_title' => array(
+        'description' => 'The task title.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        ),
+      'task_content' => array(
+        'description' => 'The task content.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        ),
+      'status' => array(
+        'description' => 'The task status.',
+        'type' => 'varchar',
+        'length' => 10,
+        'not null' => TRUE,
+        'default' => 'new',
+        ),
+      'task_date' => array(
+        'description' => 'The task created date.',
+        'mysql_type' => 'DATE',
+        'not null' => TRUE,
+        ),
+       'uid' => array(
+         'description' => 'the user identifier.',
+         'type' => 'int',
+          'unsigned' => TRUE,
+         'not null' => TRUE,
+         'default' => 0
+         ),
+
+      ),
+
+    'primary key' => array('tid'),
+  );
+  return $schema;
+}
+
+
+function add_role(){
+    if(!user_role_load_by_name('todolist_manager')){
+        $role = new stdClass();
+        $role->name = 'todolist_manager';
+        user_role_save($role);
+        }
+}
+
+function remove_role(){
+    user_role_delete('todolist_manager');
+}
+
+
+/**
+ * Implementation of hook_install().
+ */
+function todo_list_install() {
+  drupal_install_schema('todolist');
+  add_role();
+}
+
+/**
+ * Implementation of hook_enable().
+ */
+function todo_list_enable() {
+  add_role();
+}
+
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function todo_list_uninstall() {
+  drupal_uninstall_schema('todolist');
+}
